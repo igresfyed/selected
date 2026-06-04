@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>AI Mastery Quiz: RL · CNN · RNN/LSTM · Generative AI</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+        body {
+            background: #f1f5f9;
+            margin: 0;
+            padding: 24px 16px;
+            color: #0f172a;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        /* header */
+        .quiz-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-radius: 2rem;
+            padding: 1.2rem 2rem;
+            margin-bottom: 2rem;
+            color: white;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+        }
+        .quiz-header h1 {
+            margin: 0;
+            font-size: 1.7rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+        .quiz-header p {
+            margin: 0.5rem 0 0;
+            opacity: 0.85;
+            font-size: 0.95rem;
+        }
+        .stats-bar {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 0.9rem 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px -2px rgba(0,0,0,0.05);
+            font-weight: 600;
+        }
+        .score-box {
+            background: #eef2ff;
+            padding: 0.4rem 1rem;
+            border-radius: 2rem;
+            color: #1e40af;
+        }
+        .progress-text {
+            background: #f1f5f9;
+            padding: 0.4rem 1rem;
+            border-radius: 2rem;
+            color: #334155;
+        }
+        .reset-btn {
+            background: none;
+            border: 1px solid #cbd5e1;
+            padding: 0.4rem 1.2rem;
+            border-radius: 2rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+        }
+        .reset-btn:hover {
+            background: #fee2e2;
+            border-color: #f87171;
+            color: #b91c1c;
+        }
+        /* card */
+        .question-card {
+            background: white;
+            border-radius: 1.75rem;
+            padding: 1.6rem 1.8rem;
+            margin-bottom: 1.8rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            transition: all 0.2s;
+            border: 1px solid #e2e8f0;
+        }
+        .q-num {
+            display: inline-block;
+            background: #e0f2fe;
+            padding: 0.2rem 1rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #0369a1;
+            margin-bottom: 1rem;
+        }
+        .question-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0.5rem 0 1rem 0;
+            line-height: 1.4;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin: 1.2rem 0 1rem;
+        }
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: #f8fafc;
+            padding: 0.7rem 1rem;
+            border-radius: 1.2rem;
+            border: 1px solid #e2e8f0;
+            transition: all 0.15s;
+            cursor: pointer;
+        }
+        .option:hover {
+            background: #f1f5f9;
+            border-color: #94a3b8;
+        }
+        input[type="radio"] {
+            accent-color: #3b82f6;
+            width: 1.1rem;
+            height: 1.1rem;
+            margin: 0;
+        }
+        .option label {
+            font-weight: 500;
+            color: #1e293b;
+            flex: 1;
+            cursor: pointer;
+        }
+        .feedback {
+            margin-top: 0.9rem;
+            padding: 0.6rem 1rem;
+            border-radius: 1rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .feedback.correct {
+            background: #dcfce7;
+            color: #166534;
+            border-left: 5px solid #22c55e;
+        }
+        .feedback.incorrect {
+            background: #ffe4e4;
+            color: #991b1b;
+            border-left: 5px solid #ef4444;
+        }
+        .feedback.neutral {
+            background: #f1f5f9;
+            color: #334155;
+        }
+        .btn-submit {
+            background: #3b82f6;
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 0.6rem 1.4rem;
+            border-radius: 2rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.15s;
+            margin-top: 0.5rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .btn-submit:hover {
+            background: #2563eb;
+            transform: scale(0.98);
+        }
+        hr {
+            margin: 1rem 0;
+            border-color: #e2e8f0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: #475569;
+        }
+        @media (max-width: 680px) {
+            .question-card {
+                padding: 1.2rem;
+            }
+            .question-text {
+                font-size: 1.05rem;
+            }
+        }
+        button:active {
+            transform: scale(0.97);
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="quiz-header">
+        <h1>📘 Selected Labs in AI · Master Quiz</h1>
+        <p>Reinforcement Learning · CNN · RNN/LSTM · Generative AI | 80 questions</p>
+    </div>
+    <div class="stats-bar">
+        <span class="score-box">✅ Score: <span id="scoreDisplay">0</span> / <span id="totalQuestionsSpan">80</span></span>
+        <span class="progress-text">📋 Answered: <span id="answeredCount">0</span> / 80</span>
+        <button class="reset-btn" id="resetAllBtn">⟳ Reset all answers</button>
+    </div>
+    <div id="questionsContainer"></div>
+    <div class="footer">
+        ⚡ Submit each question individually → instant correct/incorrect feedback<br>
+        🔁 All progress saved locally. Reset anytime.
+    </div>
+</div>
+
+<script>
+    // ----------------------------------------------
+    // MASTER QUESTION BANK (EXTRACTED FROM PDF)
+    // includes question text, options (array), correct answer letter (A,B,C,D) and actual answer text for validation
+    // Total 80 questions exactly as per PDF (pages 3 to 80, answer keys 87-90)
+    // ----------------------------------------------
+    const QUESTIONS = [
+        { text: "Robotics is an example of which learning application?", options: ["A. Supervised learning", "B. Deep learning only", "C. Reinforcement learning", "D. Unsupervised learning"], correctLetter: "C" },
+        { text: "Reinforcement learning is mainly about choosing suitable actions to maximize what?", options: ["A. Accuracy only", "B. Reward", "C. Number of labels", "D. Training file size"], correctLetter: "B" },
+        { text: "Data is part of the input that we would find in reinforcement learning.", options: ["A. True", "B. False"], correctLetter: "B" },
+        { text: "What is the input to a reinforcement learning model?", options: ["A. An initial state", "B. A reward-only file", "C. A completed solution", "D. A pre-labeled dataset"], correctLetter: "A" },
+        { text: "In reinforcement learning, the best solution is decided based on the maximum ______.", options: ["A. Number of features", "B. Reward", "C. Number of hidden layers", "D. Dataset labels"], correctLetter: "B" },
+        { text: "Reinforcement learning is the preferred approach for simple problems with straightforward solutions.", options: ["A. True", "B. False"], correctLetter: "B" },
+        { text: "Which of the following is a disadvantage of reinforcement learning?", options: ["A. It is unsuitable for complex problems", "B. It cannot work with deep learning", "C. It is difficult to debug", "D. It does not require a reward function"], correctLetter: "C" },
+        { text: "Reinforcement learning can be combined with deep learning to improve performance.", options: ["A. True", "B. False"], correctLetter: "A" },
+        { text: "In supervised learning, the training data usually includes the answer key, while in reinforcement learning the agent decides actions based on feedback.", options: ["A. True", "B. False"], correctLetter: "A" },
+        { text: "Which application is mentioned as an example of reinforcement learning?", options: ["A. Email formatting", "B. Robotics", "C. Manual data entry", "D. Static website design"], correctLetter: "B" },
+        { text: "Reinforcement learning obtains training data through direct interaction between the agent and the _____.", options: ["A. Database only", "B. Environment", "C. Operating system", "D. Image filter"], correctLetter: "B" },
+        { text: "If the reward function is poorly designed, the reinforcement learning agent may fail to learn the desired behavior.", options: ["A. True", "B. False"], correctLetter: "A" },
+        { text: "Choose the correct statement.", options: ["A. Machine learning is a subset of Al", "B. Al is a subset of computer science", "C. Reinforcement learning is an area of machine learning", "D. All of them"], correctLetter: "D" },
+        { text: "The most widely used deep learning method for image processing in the lecture is ______.", options: ["A. RNN", "B. CNN", "C. TextBlob", "D. Q-learning"], correctLetter: "B" },
+        { text: "CNNs make the explicit assumption that the inputs are ______.", options: ["A. Texts", "B. Images", "C. Rewards", "D. Tables only"], correctLetter: "B" },
+        { text: "CNNs pass the input through a series of which layers?", options: ["A. Convolutional layers", "B. Pooling layers", "C. Fully connected layers", "D. All of them"], correctLetter: "D" },
+        { text: "Which layer applies filters or kernels to extract features from an image?", options: ["A. Convolutional layer", "B. SoftMax layer", "C. Output label", "D. Reward layer"], correctLetter: "A" },
+        { text: "In CNNs, the kernel function is also known as the ______.", options: ["A. Filter", "B. Label", "C. Token", "D. Reward"], correctLetter: "A" },
+        { text: "Stride determines the step size by which the filter moves over the image.", options: ["A. True", "B. False"], correctLetter: "A" },
+        { text: "Zero padding adds rows and columns of zeros around the input image.", options: ["A. True", "B. False"], correctLetter: "A" },
+        { text: "Which activation function is commonly used in CNNs and eliminates negative values?", options: ["A. SoftMax", "B. ReLU", "C. Average pooling", "D. TextBlob"], correctLetter: "B" },
+        { text: "The pooling layer is mainly used to ______.", options: ["A. Increase image resolution", "B. Reduce the spatial size of convoluted features", "C. Store all past inputs", "D. Choose a reward"], correctLetter: "B" },
+        { text: "Max pooling uses the maximum value from each cluster of neurons.", options: ["A. True", "B. False"], correctLetter: "A" },
+        { text: "Average pooling uses the average value from each cluster of neurons.", options: ["A. True", "B. False"], correctLetter: "A" },
+        { text: "______ layers connect every neuron in one layer to every neuron in another layer.", options: ["A. Convolutional", "B. Pooling", "C. Fully connected", "D. Padding"], correctLetter: "C" },
+        { text: "Before the fully connected layer, the extracted features are usually ______.", options: ["A. Flattened into a vector", "B. Deleted", "C. Converted into rewards", "D. Randomly ignored"], correctLetter: "A" },
+        { text: "The SoftMax layer translates the input array into probabilities for each class.", options: ["A. True", "B. False"], correctLetter: "A" },
+        { text: "AlexNet and VGGNet are examples of ______ CNN models.", options: ["A. Classic", "B. Inception", "C. Residual", "D. Recurrent"], correctLetter: "A" },
+        { text: "GoogleNet and Inception-V3 are examples of ______ CNN models.", options: ["A. Classic", "B. Inception", "C. Residual", "D. Reinforcement"], correctLetter: "B" },
+        { text: "ResNet-101 is an example of CNN inception models.", options: ["A. True", "B. False"], correctLetter: "B" },
+        { text: "ResNet-101 belongs to which CNN model strategy?", options: ["A. Classic models", "B. Inception models", "C. Residual models", "D. Sequential models"], correctLetter: "C" },
+        { text: "The convolution operation helps CNNs reduce the number of free parameters compared to fully connected networks on images.", options: ["A. True", "B. False"], correctLetter: "A" },
+        { text: "For a small image of size 100 x 100, a fully connected layer would need many weights because each pixel is a variable.", options: ["A. True", "B. False"], correctLetter: "A" },
+        { text: "Feature learning in CNN is mainly done through which two components?", options: ["A. Convolution layer and pooling layer", "B. Reward and action", "C. Text and token", "D. Forget gate and output gate"], correctLetter: "A" },
+        { text: "If multiple filters are used on the same image, the convolution results are stacked and combined.", options: ["A. True", "B. False"], correctLetter: "A" },
+        { text: "The final fully connected layer provides a score or probability for each predicted object/class.", options: ["A. True", "B. False"], correctLetter: "A" },
+        { text: "Which layer performs the final classification after features are extracted and flattened?", options: ["A. Fully connected layer", "B. Padding layer", "C. Input state", "D. Forget gate"], correctLetter: "A" },
+        { text: "What makes RNNs different from traditional neural networks?", options: ["A. They process inputs in parallel", "B. They ignore previous inputs", "C. They have memory of prior inputs", "D. They use only one hidden layer"], correctLetter: "C" },
+        { text: "RNNs handle sequences by converting sequences into numerical labels only.", options: ["A. True", "B. False"], correctLetter: "B" },
+        { text: "The output of an RNN at each time step depends only on the current input.", options: ["A. True", "B. False"], correctLetter: "B" },
+        { text: "RNNs assume that output at each time step is independent of previous outputs.", options: ["A. True", "B. False"], correctLetter: "B" },
+        { text: "The RNN tracks context by maintaining a ______ at each time step.", options: ["A. Hidden state", "B. Static label", "C. Parity block", "D. Filter size"], correctLetter: "A" },
+        { text: "The hidden state in an RNN acts as memory that stores information about previous inputs.", options: ["A. True", "B. False"], correctLetter: "A" },
+        { text: "At each time step, the RNN processes the current input with the hidden state from the previous time step.", options: ["A. True", "B. False"], correctLetter: "A" },
+        { text: "Which of the following is NOT a typical application of RNNs?", options: ["A. Signal Processing", "B. Text Generation", "C. Image Segmentation", "D. Machine Translation"], correctLetter: "C" },
+        { text: "RNNs are useful for natural language processing tasks because text is sequential data.", options: ["A. True", "B. False"], correctLetter: "A" },
+        { text: "What problem is LSTM designed to solve in RNNs?", options: ["A. Slow convergence", "B. Vanishing gradient", "C. Overfitting only", "D. Image noise"], correctLetter: "B" },
+        { text: "The vanishing gradient problem can make it difficult to train deep RNNs.", options: ["A. True", "B. False"], correctLetter: "A" },
+        { text: "RNNs may suffer from vanishing and exploding gradient problems.", options: ["A. True", "B. False"], correctLetter: "A" },
+        { text: "LSTM networks contain cells with three gates: input, output, and _____.", options: ["A. Forget gate", "B. SoftMax gate", "C. Pooling gate", "D. Reward gate"], correctLetter: "A" },
+        { text: "What is the role of the forget gate in an LSTM cell?", options: ["A. It removes information that is no longer useful", "B. It randomly drops information to reduce overfitting", "C. It stores all past inputs forever", "D. It activates hidden layers"], correctLetter: "A" },
+        { text: "The gates in an LSTM control the flow of information needed to predict the output.", options: ["A. True", "B. False"], correctLetter: "A" },
+        { text: "The idiom 'feeling under the weather' illustrates why order matters in sequential data.", options: ["A. True", "B. False"], correctLetter: "A" },
+        { text: "RNNs are a key technology for data collected from sensors over time.", options: ["A. True", "B. False"], correctLetter: "A" },
+        { text: "The feedback loop in RNNs is created by passing the hidden state from one time step to the next.", options: ["A. True", "B. False"], correctLetter: "A" },
+        { text: "What is the primary purpose of generative AI?", options: ["A. Predict future data values", "B. Create new content based on learned patterns", "C. Optimize search algorithms", "D. Sort numerical data only"], correctLetter: "B" },
+        { text: "Generative AI can create text, images, audio, video, or code based on patterns learned from existing data.", options: ["A. True", "B. False"], correctLetter: "A" },
+        { text: "Which of the following is a phase in the generative AI lifecycle?", options: ["A. Deployment", "B. Encryption", "C. Tuning", "D. Disk formatting"], correctLetter: "C" },
+        { text: "Generative AI operates in three phases: training, tuning, and generation/evaluation/retuning.", options: ["A. True", "B. False"], correctLetter: "A" },
+        { text: "A foundation model serves as the basis for multiple generative AI applications.", options: ["A. True", "B. False"], correctLetter: "A" },
+        { text: "Foundation models are typically trained on huge volumes of raw, unstructured, unlabeled data.", options: ["A. True", "B. False"], correctLetter: "A" },
+        { text: "The most common foundation models for text generation applications are ______.", options: ["A. Large Language Models", "B. LSTM", "C. Decision trees only", "D. Routers"], correctLetter: "A" },
+        { text: "A Large Language Model is trained on massive amounts of text data to understand and generate human language.", options: ["A. True", "B. False"], correctLetter: "A" },
+        { text: "Which architecture was introduced by Google in 2017 and is used to develop many LLMs?", options: ["A. Transformer", "B. ENCDER", "C. Polarity", "D. TextBlob"], correctLetter: "A" },
+        { text: "In NLP, a transformer encodes each word as a token and uses an attention map to understand context.", options: ["A. True", "B. False"], correctLetter: "A" },
+        { text: "Which of these is NOT a typical use of Large Language Models?", options: ["A. Image enhancement", "B. Text summarization", "C. Story writing", "D. Answering questions"], correctLetter: "A" },
+        { text: "An LLM does not 'think' like a human; it uses probability and pattern matching to simulate understanding.", options: ["A. True", "B. False"], correctLetter: "A" },
+        { text: "To determine the sentiment of a text using TextBlob, you measure the ______.", options: ["A. Response", "B. Polarity", "C. Transformity", "D. Stride"], correctLetter: "B" },
+        { text: "In the sentiment analysis code, polarity greater than 0 means the text is ______.", options: ["A. Positive", "B. Neutral", "C. Negative", "D. Unlabeled"], correctLetter: "A" },
+        { text: "In the sentiment analysis code, polarity equal to 0 means the text is ______.", options: ["A. Positive", "B. Neutral", "C. Negative", "D. Generated"], correctLetter: "B" },
+        { text: "In the sentiment analysis code, polarity less than 0 means the text is ______.", options: ["A. Positive", "B. Neutral", "C. Negative", "D. Tokenized"], correctLetter: "C" },
+        { text: "Which Python library is used in the lecture for simple text sentiment analysis?", options: ["A. TextBlob", "B. NumPy only", "C. OpenCV", "D. Matplotlib"], correctLetter: "A" },
+        { text: "The Transformers pipeline can be used for text generation and summarization tasks.", options: ["A. True", "B. False"], correctLetter: "A" },
+        { text: "In the simple chatbot code, predefined responses are stored in a dictionary and selected randomly.", options: ["A. True", "B. False"], correctLetter: "A" },
+        { text: "In the chatbot code, if no keyword is found in the user input, the chatbot returns a default response.", options: ["A. True", "B. False"], correctLetter: "A" },
+        { text: "Which statement best describes reinforcement learning?", options: ["A. Learning from labeled data only", "B. Decision making through actions and feedback", "C. Image filtering only", "D. Generating text with attention maps"], correctLetter: "B" },
+        { text: "Which model is best suited for ordered sequence problems such as text and signals?", options: ["A. RNN", "B. NNN", "C. CNN only", "D. TextBlob only"], correctLetter: "A" },
+        { text: "Which deep learning model is most strongly associated with image classification?", options: ["A. CNN", "B. LSTM only", "C. TextBlob", "D. Q-table"], correctLetter: "A" },
+        { text: "Which concept converts the SoftMax input vector into class probabilities?", options: ["A. SoftMax function", "B. Forget gate", "C. Reward function", "D. Hidden state"], correctLetter: "A" },
+        { text: "Which pair correctly matches the concept with its role?", options: ["A. Forget gate — discards irrelevant information", "B. SoftMax — stores all previous inputs", "C. Pooling — increases image dimensions", "D. Reward — converts text to polarity"], correctLetter: "A" }
+    ];
+
+    // verify length (should be 80)
+    console.log("Total questions loaded:", QUESTIONS.length);
+    
+    // storage for selected answers & feedback status (store which question shows feedback & correctness)
+    let userAnswers = new Array(QUESTIONS.length).fill(null);      // stores selected option value e.g. "A", "B"...
+    let answerStatus = new Array(QUESTIONS.length).fill(null);     // 'correct', 'incorrect', null
+    
+    // DOM elements
+    const container = document.getElementById("questionsContainer");
+    const scoreSpan = document.getElementById("scoreDisplay");
+    const answeredSpan = document.getElementById("answeredCount");
+    const totalSpan = document.getElementById("totalQuestionsSpan");
+    totalSpan.textContent = QUESTIONS.length;
+    
+    function updateStats() {
+        let answered = userAnswers.filter(a => a !== null).length;
+        let correctCount = answerStatus.filter(s => s === 'correct').length;
+        scoreSpan.textContent = correctCount;
+        answeredSpan.textContent = answered;
+    }
+    
+    function saveToLocal() {
+        localStorage.setItem("ai_quiz_answers", JSON.stringify(userAnswers));
+        localStorage.setItem("ai_quiz_status", JSON.stringify(answerStatus));
+    }
+    
+    function loadFromLocal() {
+        const savedAns = localStorage.getItem("ai_quiz_answers");
+        const savedStat = localStorage.getItem("ai_quiz_status");
+        if (savedAns) {
+            const parsed = JSON.parse(savedAns);
+            if (parsed.length === QUESTIONS.length) userAnswers = parsed;
+        }
+        if (savedStat) {
+            const parsedStat = JSON.parse(savedStat);
+            if (parsedStat.length === QUESTIONS.length) answerStatus = parsedStat;
+        }
+        updateStats();
+    }
+    
+    function resetAll() {
+        userAnswers = new Array(QUESTIONS.length).fill(null);
+        answerStatus = new Array(QUESTIONS.length).fill(null);
+        updateStats();
+        saveToLocal();
+        renderQuestions();
+    }
+    
+    function handleSubmit(index, selectedLetter) {
+        if (!selectedLetter) return;
+        const q = QUESTIONS[index];
+        const isCorrect = (selectedLetter.toUpperCase() === q.correctLetter);
+        // update status
+        userAnswers[index] = selectedLetter;
+        if (isCorrect) {
+            answerStatus[index] = 'correct';
+        } else {
+            answerStatus[index] = 'incorrect';
+        }
+        updateStats();
+        saveToLocal();
+        renderQuestions();  // re-render to show feedback & persist radio selection
+    }
+    
+    function renderQuestions() {
+        if (!container) return;
+        container.innerHTML = '';
+        for (let i = 0; i < QUESTIONS.length; i++) {
+            const q = QUESTIONS[i];
+            const currentSelected = userAnswers[i];
+            const status = answerStatus[i];
+            const optionsHtml = q.options.map(opt => {
+                const optLetter = opt.charAt(0);
+                const isChecked = (currentSelected === optLetter);
+                return `
+                    <div class="option" data-qidx="${i}" data-val="${optLetter}">
+                        <input type="radio" name="q_${i}" id="q_${i}_${optLetter}" value="${optLetter}" ${isChecked ? 'checked' : ''}>
+                        <label for="q_${i}_${optLetter}">${opt}</label>
+                    </div>
+                `;
+            }).join('');
+            
+            let feedbackHtml = '';
+            if (status === 'correct') {
+                feedbackHtml = `<div class="feedback correct">✅ Correct! Well done.</div>`;
+            } else if (status === 'incorrect') {
+                const correctAnsLetter = q.correctLetter;
+                let correctText = "";
+                for (let opt of q.options) {
+                    if (opt.startsWith(correctAnsLetter)) {
+                        correctText = opt;
+                        break;
+                    }
+                }
+                feedbackHtml = `<div class="feedback incorrect">❌ Incorrect. The correct answer is ${correctAnsLetter}. ${correctText}</div>`;
+            } else {
+                feedbackHtml = `<div class="feedback neutral">⚡ Select an answer and click "Submit answer" to check.</div>`;
+            }
+            
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            card.innerHTML = `
+                <div class="q-num">Question ${i+1} / ${QUESTIONS.length}</div>
+                <div class="question-text">${escapeHtml(q.text)}</div>
+                <div class="options" id="options-${i}">
+                    ${optionsHtml}
+                </div>
+                <button class="btn-submit" data-idx="${i}">✔ Submit answer</button>
+                ${feedbackHtml}
+            `;
+            container.appendChild(card);
+        }
+        
+        // attach event listeners (dynamic)
+        document.querySelectorAll('.btn-submit').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const idx = parseInt(btn.getAttribute('data-idx'));
+                const selectedRadio = document.querySelector(`input[name="q_${idx}"]:checked`);
+                if (!selectedRadio) {
+                    alert("Please select an option before submitting.");
+                    return;
+                }
+                const selectedVal = selectedRadio.value;
+                handleSubmit(idx, selectedVal);
+            });
+        });
+        
+        // optional: style radio click on div
+        document.querySelectorAll('.option').forEach(div => {
+            div.addEventListener('click', (e) => {
+                const radio = div.querySelector('input[type="radio"]');
+                if (radio && !radio.checked) {
+                    radio.checked = true;
+                    // trigger change? but we rely on submit
+                }
+            });
+        });
+    }
+    
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+            return c;
+        });
+    }
+    
+    // init
+    loadFromLocal();
+    renderQuestions();
+    document.getElementById("resetAllBtn").addEventListener("click", () => {
+        if (confirm("Reset all answers and progress?")) {
+            resetAll();
+        }
+    });
+    
+</script>
+</body>
+</html>
